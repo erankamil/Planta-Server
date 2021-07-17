@@ -1,1 +1,1 @@
-# shefa-server
+# Planta App Server
