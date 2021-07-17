@@ -1,0 +1,45 @@
+{
+  "name": "nodejs-server-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "docs": "apidoc -i apidoc/  -o webApidoc/",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node ./src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "",
+  "dependencies": {
+    "aws-sdk": "^2.936.0",
+    "config": "^3.3.6",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.11.1",
+    "helmet": "^4.4.1",
+    "lodash": "^4.17.21",
+    "mongoose": "^5.12.7",
+    "multiparty": "^4.2.2",
+    "pm2": "^5.1.0",
+    "socket.io": "^4.1.2",
+    "typescript": "^4.2.4",
+    "url": "^0.11.0",
+    "validator": "^13.6.0"
+  },
+  "devDependencies": {
+    "@types/socket.io": "^3.0.2",
+    "@types/config": "0.0.39",
+    "@types/cors": "^2.8.11",
+    "@types/debug": "^4.1.6",
+    "@types/express": "^4.17.13",
+    "@types/lodash": "^4.14.171",
+    "prettier": "2.3.1"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "apps": [
+    {
+      "name": "shefa",
+      "script": "./dist/server.js",
+      "env": {}
+    }
+  ],
+  "deploy": {
+    "development": {
+      "key": "~/Desktop/my-projects/shefa/shefa-test.pem",
+      "user": "ubuntu",
+      "host": ["ec2-3-249-244-68.eu-west-1.compute.amazonaws.com"],
+      "ref": "origin/develop",
+      "repo": "git@github.com:MoveoTech/ShefaServer.git",
+      "path": "/home/ubuntu/shefa-server",
+      "ssh_options": "StrictHostKeyChecking=no",
+      "post-deploy": "./install-build-del-source.sh && pm2 reload ecosystem.json --env development",
+      "pre-deploy-local": "echo 'Deploying code to servers'",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "production": {
+      "key": "~/Desktop/my-projects/shefa/shefa-prod.pem",
+      "user": "ubuntu",
+      "host": ["ec2-34-244-32-88.eu-west-1.compute.amazonaws.com"],
+      "ref": "origin/release/1.0",
+      "repo": "git@github.com:MoveoTech/ShefaServer.git",
+      "path": "/home/ubuntu/shefa-server",
+      "ssh_options": "StrictHostKeyChecking=no",
+      "post-deploy": "./install-build-del-source.sh && pm2 reload ecosystem.json --env production",
+      "pre-deploy-local": "echo 'Deploying code to servers'",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}
