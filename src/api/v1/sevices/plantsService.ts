@@ -20,8 +20,8 @@ export class PlantsService {
   public async findOne(serviceData: any): Promise<any> {
     const filters = { ...serviceData.filters };
     const options = serviceData.sort?.sort;
-    const appointment = await this.plantsDAL.findOne(filters, options);
-    return appointment;
+    const plant = await this.plantsDAL.findOne(filters, options);
+    return plant;
   }
 
   public async findOneAndUpdate(
@@ -29,18 +29,11 @@ export class PlantsService {
     update: any,
     options: any = {}
   ): Promise<any> {
-    const appointment = await this.plantsDAL.findOneAndUpdate(
+    const plant = await this.plantsDAL.findOneAndUpdate(
       filter,
       update,
       options
     );
-    return appointment;
-  }
-
-  public getCreatedDate(date: Date): string {
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const yaer = date.getFullYear();
-    return `${day}/${month}/${yaer}`;
+    return plant;
   }
 }

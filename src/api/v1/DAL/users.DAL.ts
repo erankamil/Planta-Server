@@ -1,21 +1,21 @@
 import { AbsDAL } from "./Base/absDAL";
 import { ObjectId } from "mongodb";
 import { ErrorMsgs } from "../entities/Errors/ErrorMsgs";
-import { PlantModel } from "../../../db/models/plant.model";
+import { UserModel } from "../../../db/models/user.model";
 
-export class PlantsDAL extends AbsDAL {
-  public static readonly PLANTS_COLLECTION = "plants";
+export class UsersDAL extends AbsDAL {
+  public static readonly PLANTS_COLLECTION = "users";
 
   protected getCollectionName(): string {
-    return PlantsDAL.PLANTS_COLLECTION;
+    return UsersDAL.PLANTS_COLLECTION;
   }
 
   protected getModel() {
-    return PlantModel;
+    return UserModel;
   }
 
   protected getModelInstance(rawData: any) {
-    const doc = new PlantModel(rawData);
+    const doc = new UserModel(rawData);
 
     return doc;
   }

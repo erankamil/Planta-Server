@@ -1,4 +1,3 @@
-// import { Validator } from "class-validator";
 import { ObjectID, ObjectId } from "mongodb";
 
 let url = require('url'); 

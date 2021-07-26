@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { PlantsController } from "./controllers/plants.controller";
+import {AppController} from "./controllers/app.controller";
 
 class V1Routes {
   public router = Router();
@@ -9,9 +9,8 @@ class V1Routes {
   }
 
   private initializeRoutes() {
-    const plantsController = new PlantsController();
-
-    this.router.use("/plants-info", plantsController.router);
+    const appController = new AppController();
+    this.router.use("/planta", appController.router);
   }
 }
 
