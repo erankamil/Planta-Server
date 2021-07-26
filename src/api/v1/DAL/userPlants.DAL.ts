@@ -1,21 +1,21 @@
 import { AbsDAL } from "./Base/absDAL";
 import { ObjectId } from "mongodb";
 import { ErrorMsgs } from "../entities/Errors/ErrorMsgs";
-import { PlantModel } from "../../../db/models/plant.model";
+import { UserPlantModel } from "../../../db/models/userPlant.model";
 
-export class PlantsDAL extends AbsDAL {
-  public static readonly PLANTS_COLLECTION = "plants";
+export class UserPlantsDAL extends AbsDAL {
+  public static readonly PLANTS_COLLECTION = "users";
 
   protected getCollectionName(): string {
-    return PlantsDAL.PLANTS_COLLECTION;
+    return UserPlantsDAL.PLANTS_COLLECTION;
   }
 
   protected getModel() {
-    return PlantModel;
+    return UserPlantModel;
   }
 
   protected getModelInstance(rawData: any) {
-    const doc = new PlantModel(rawData);
+    const doc = new UserPlantModel(rawData);
 
     return doc;
   }
@@ -56,16 +56,10 @@ export class PlantsDAL extends AbsDAL {
     }
   }
 
-  public async findOneAndUpdate(
-    filters,
-    update,
-    options: any = {}
-  ): Promise<any> {
+  public async findOneAndUpdate(filters, update): Promise<any> {
     try {
       const model = this.getModel();
-      const res = await model
-        .findOneAndUpdate(filters, update, { new: true })
-        .sort(options);
+      const res = await model.findOneAndUpdate(filters, update, { new: true });
       return { res };
     } catch (error) {
       throw new ErrorMsgs("Internal server error", error.message, false);
