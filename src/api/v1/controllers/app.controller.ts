@@ -11,6 +11,12 @@ export class AppController extends AbsController {
     // get Planet By Name
     this.router.get("/get-plant/:name", this.getPlanetByName.bind(this));
 
+    // get All Planets
+    this.router.get("/get-all-plants", this.getAllPlanets.bind(this));
+
+    // get All User Planets
+    this.router.get("/get-all-userplants/:userId", this.getAllUserPlanets.bind(this));
+
     // create new user
     this.router.post("/sign-up", this.createNewUser.bind(this));
 
@@ -18,9 +24,7 @@ export class AppController extends AbsController {
     this.router.post("/add-user-plant", this.addUserPlant.bind(this));
 
     // add measurement val
-    this.router.put(
-      "/add-measurement-value",
-      this.addMeasurementValue.bind(this)
+    this.router.put("/add-measurement-value",this.addMeasurementValue.bind(this)
     );
   }
   // ----------------------------------------- APP CONTROLLER -----------------------------------------------
@@ -57,6 +61,28 @@ export class AppController extends AbsController {
     // Serve request:
     super.ServeRequest(req, res, serveData);
   }
+
+   /**
+   *  get Planet By Name
+   * @param req
+   * @param res
+   * @param next
+   */
+    public async getAllPlanets(req: any, res: any, next: any) {
+      console.log("App Controller - getAllPlanets");
+      const handler = new AppHandler();
+  
+      // Create serve data:
+      let serveData = this.CreateServeData(
+        handler.getAllPlanets,
+        { },
+        handler.buildPageDataResult,
+        handler,
+        "getPlanetByName"
+      );
+      // Serve request:
+      super.ServeRequest(req, res, serveData);
+    }
 
   /**
    *  create New User
@@ -109,6 +135,28 @@ export class AppController extends AbsController {
     // Serve request:
     super.ServeRequest(req, res, serveData);
   }
+
+     /**
+   *  get Planet By Name
+   * @param req
+   * @param res
+   * @param next
+   */
+      public async getAllUserPlanets(req: any, res: any, next: any) {
+        console.log("App Controller - getAllUserPlanets");
+        const handler = new AppHandler();
+    
+        // Create serve data:
+        let serveData = this.CreateServeData(
+          handler.getAllUserPlanets,
+          { userId: req.params.userId },
+          handler.buildPageDataResult,
+          handler,
+          "getPlanetByName"
+        );
+        // Serve request:
+        super.ServeRequest(req, res, serveData);
+      }
 
   /**
    *  add Measurement Value

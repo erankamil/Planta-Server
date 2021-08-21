@@ -44,6 +44,30 @@ export class UserPlantsDAL extends AbsDAL {
     }
   }
 
+  public async getAllUsersPlants(
+    filters,
+    pagination: any,
+    projection: any,
+    options: any = {}
+  ): Promise<any> {
+    const { skip, limit } = pagination;
+    try {
+      const model = this.getModel();
+      const filter = this.getQueryFilters(filters);
+
+      const res = await Promise.all([
+        model.find(filter, projection, options).skip(skip).limit(limit).populate('plant'),
+        model.countDocuments(filter),
+      ]);
+      const hits = res[0];
+      const count = res[1];
+
+      return { hits, count };
+    } catch (error) {
+      throw new ErrorMsgs("Internal server error", error.message, false);
+    }
+  }
+
   public async findOne(filters, options: any = {}): Promise<any> {
     try {
       const model = this.getModel();

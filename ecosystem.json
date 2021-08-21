@@ -24,7 +24,7 @@
     "production": {
       "key": "~/Desktop/my-projects/shefa/shefa-prod.pem",
       "user": "ubuntu",
-      "host": ["ec2-34-244-32-88.eu-west-1.compute.amazonaws.com"],
+      "host": ["ec2-54-216-234-17.eu-west-1.compute.amazonaws.com"],
       "ref": "origin/release/1.0",
       "repo": "git@github.com:MoveoTech/ShefaServer.git",
       "path": "/home/ubuntu/shefa-server",

@@ -18,7 +18,7 @@ export class AppHandler extends AbsRequestHandler {
     const name = reqData.name;
 
     const serviceData = {
-      user: reqData.user,
+      user: {},
       pagination: {
         skip: 0,
         limit: 1,
@@ -39,6 +39,75 @@ export class AppHandler extends AbsRequestHandler {
 
     const pageData = {
       plantInfo: plant,
+    };
+
+    return { pageData };
+  }
+
+  /**
+   * get All Planets
+   * @param reqData
+   */
+
+  public async getAllPlanets(reqData: any) {
+    const plantsService = new PlantsService();
+
+    const serviceData = {
+      user: {},
+      pagination: {},
+      filters: {},
+      sort: {},
+    };
+
+    const result = await plantsService.filter(serviceData);
+    let Allplants;
+
+    if (result?.hits && result?.hits.length) {
+      Allplants = result.hits;
+    } else if (result?.hits?.length === 0) {
+      console.log("No plats to show");
+      Allplants = null;
+    } else {
+      console.log("DB Error");
+      Allplants = null;
+    }
+
+    const pageData = {
+      plants: Allplants,
+    };
+
+    return { pageData };
+  }
+
+  /**
+   * get All Planets
+   * @param reqData
+   */
+
+   public async getAllUserPlanets(reqData: any) {
+    const userPlantsService = new UserPlantsService();
+    const serviceData = {
+      user: {},
+      pagination: {},
+      filters: {userId : reqData.userId},
+      sort: {},
+    };
+
+    const result = await userPlantsService.getAllUsersPlants(serviceData);
+    let Allplants;
+
+    if (result?.hits && result?.hits.length) {
+      Allplants = result.hits;
+    } else if (result?.hits?.length === 0) {
+      console.log("No plats to show");
+      Allplants = null;
+    } else {
+      console.log("DB Error");
+      Allplants = null;
+    }
+
+    const pageData = {
+      plants: Allplants,
     };
 
     return { pageData };
@@ -99,7 +168,7 @@ export class AppHandler extends AbsRequestHandler {
     }
 
     const newUserPlantData = {
-      user: userId,
+      userId: userId,
       name: userPlantName,
       sensorId: sensorId,
       plant: plantId,
@@ -109,7 +178,7 @@ export class AppHandler extends AbsRequestHandler {
     const UserPlant = await userPlantsService.createUserPlant(newUserPlantData);
 
     const pageData = {
-      newUser: UserPlant,
+      newUserPlant: UserPlant,
     };
 
     return { pageData };

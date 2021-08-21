@@ -59,6 +59,20 @@ export class UserPlantsService {
     return userPlants;
   }
 
+  public async getAllUsersPlants(serviceData: any): Promise<any> {
+    const userRoles = serviceData.user ? serviceData.user.roles : [];
+    const filters = { ...serviceData.filters };
+    const pagination = serviceData.pagination;
+    const options = serviceData.sort;
+    const userPlants = await this.userPlantsDAL.getAllUsersPlants(
+      filters,
+      pagination,
+      {},
+      options
+    );
+    return userPlants;
+  }
+
   public async findOne(serviceData: any): Promise<any> {
     const filters = { ...serviceData.filters };
     const options = serviceData.sort?.sort;

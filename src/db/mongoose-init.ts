@@ -1,7 +1,7 @@
 import * as mongoose from "mongoose";
 import * as config from "config";
 import * as debug from "debug";
-require('dotenv').config();
+require("dotenv").config();
 
 const error = debug("mongooseInit:error");
 const log = debug("mongooseInit:log");
@@ -26,19 +26,19 @@ db.on("error", (err) => {
 });
 
 function getUriFromDbConfig(dbConfig: { [key: string]: string }): string {
-  const {port, host, database, environment } = dbConfig;
-  let pass,user;
-  if(environment === 'production'){
+  const { port, host, database, environment } = dbConfig;
+  let pass, user;
+  if (environment === "production") {
     user = process.env.PROD_USER;
-    pass = process.env.PROD_PASSWORD;    
-  }
-  else if(environment === 'development'){
+    pass = process.env.PROD_PASSWORD;
+  } else if (environment === "development") {
     user = process.env.DEV_USER;
-    pass = process.env.DEV_PASSWORD;    
-  }
-  else  {
+    pass = process.env.DEV_PASSWORD;
+  } else {
     console.log("config environment is not correct");
   }
+
   const uri = `mongodb+srv://${user}:${pass}@${host}/${database}?retryWrites=true&w=majority`;
+
   return uri;
 }

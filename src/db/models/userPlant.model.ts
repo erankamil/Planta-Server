@@ -10,7 +10,7 @@ import { DisplayItem } from "../../api/v1/entities/displayItem";
 import { ObjectId } from "mongoose";
 
 export interface IUserPlant {
-  user: ObjectId;
+  userId: string;
   name: string;
   sensorId: string;
   plant: ObjectId; // plant optimal information
@@ -22,7 +22,7 @@ class UserPlantMethods {}
 
 const UserPlantSchema = createStrongSchema(
   {
-    user: { type: Schema.Types.ObjectId, ref: "users" },
+    userId: { type: String },
     name: { type: String },
     sensorId: { type: String },
     plant: { type: Schema.Types.ObjectId, ref: "plants" },
