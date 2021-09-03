@@ -25,7 +25,7 @@
       "key": "~/Desktop/myStudies/Final-Project/planta-prod.pem",
       "user": "ubuntu",
       "host": ["ec2-54-216-234-17.eu-west-1.compute.amazonaws.com"],
-      "ref": "origin/main",
+      "ref": "main",
       "repo": "git@github.com:erankamil/Planta-Server.git",
       "path": "/home/ubuntu/planta-server",
       "ssh_options": "StrictHostKeyChecking=no",
