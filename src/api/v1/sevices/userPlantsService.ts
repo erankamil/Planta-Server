@@ -3,28 +3,39 @@ import { UserPlantsDAL } from "../DAL/userPlants.DAL";
 export class UserPlantsService {
   private userPlantsDAL: UserPlantsDAL | any = new UserPlantsDAL();
 
+  getDateAndHourStr(date:Date){
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const yaer = date.getFullYear();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const dateStr = `${day}/${month}/${yaer}`;
+    const hourStr = `${hour}:${minute}`;
+    return { hourStr, dateStr };
+  }
+
   getUpdateValuesFromReq(reqData: any): any {
     const measurementType = reqData.measurementType;
     const updateValues = reqData.value;
+    const dateTime = new Date();
+    const { hourStr, dateStr } = this.getDateAndHourStr(dateTime);
+    
     let res = null;
     let value;
+    if (updateValues) {
     switch (measurementType) {
       case "soilMoisturePerHour": {
-        if (updateValues?.date && updateValues?.hour && updateValues?.value) {
           value = {
-            date: updateValues.date,
-            hour: updateValues.hour,
-            value: updateValues.value,
+            date: dateStr,
+            hour: hourStr,
+            value: updateValues,
           };
           res = { $push: { soilMoisturePerHour: value } };
-        }
         break;
       }
       case "hoursOflightPerDay": {
-        if (updateValues?.date && updateValues?.value) {
-          value = { date: updateValues.date, value: updateValues.value };
+          value = { date: dateStr, value: updateValues };
           res = { $push: { hoursOflightPerDay: value } };
-        }
         break;
       }
       default: {
@@ -32,6 +43,10 @@ export class UserPlantsService {
         break;
       }
     }
+  }
+  else{
+    throw "ERROR:The measurement value empty";
+  }
 
     if (!res) {
       throw "ERROR:Update updateValues wrong";
