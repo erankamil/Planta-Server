@@ -17,6 +17,9 @@ export class AppController extends AbsController {
     // get All User Planets
     this.router.get("/get-all-userplants/:userId", this.getAllUserPlanets.bind(this));
 
+    // get Daily Measurement Avarage
+    this.router.get( "/get-daily-measurement-avarage/:userPlantId", this.getDailyAverageMeasurement.bind(this));
+     
     // create new user
     this.router.post("/sign-up", this.createNewUser.bind(this));
 
@@ -25,6 +28,10 @@ export class AppController extends AbsController {
 
     // add measurement val
     this.router.put("/add-measurement-value",this.addMeasurementValue.bind(this)
+    );
+
+    // add measurement val manually
+    this.router.put("/add-measurement-value-manually",this.addMeasurementValueManually.bind(this)
     );
   }
   // ----------------------------------------- APP CONTROLLER -----------------------------------------------
@@ -62,27 +69,71 @@ export class AppController extends AbsController {
     super.ServeRequest(req, res, serveData);
   }
 
-   /**
-   *  get Planet By Name
+  /**
+   *  get All Planets
    * @param req
    * @param res
    * @param next
    */
-    public async getAllPlanets(req: any, res: any, next: any) {
-      console.log("App Controller - getAllPlanets");
-      const handler = new AppHandler();
-  
-      // Create serve data:
-      let serveData = this.CreateServeData(
-        handler.getAllPlanets,
-        { },
-        handler.buildPageDataResult,
-        handler,
-        "getPlanetByName"
-      );
-      // Serve request:
-      super.ServeRequest(req, res, serveData);
-    }
+  public async getAllPlanets(req: any, res: any, next: any) {
+    console.log("App Controller - getAllPlanets");
+    const handler = new AppHandler();
+
+    // Create serve data:
+    let serveData = this.CreateServeData(
+      handler.getAllPlanets,
+      {},
+      handler.buildPageDataResult,
+      handler,
+      "getAllPlanets"
+    );
+    // Serve request:
+    super.ServeRequest(req, res, serveData);
+  }
+
+  /**
+   *  get All User Planets
+   * @param req
+   * @param res
+   * @param next
+   */
+   public async getAllUserPlanets(req: any, res: any, next: any) {
+    console.log("App Controller - getAllUserPlanets");
+    const handler = new AppHandler();
+
+    // Create serve data:
+    let serveData = this.CreateServeData(
+      handler.getAllUserPlanets,
+      { userId: req.params.userId },
+      handler.buildPageDataResult,
+      handler,
+      "getAllUserPlanets"
+    );
+    // Serve request:
+    super.ServeRequest(req, res, serveData);
+  }
+
+  /**
+   *  get Daily Measurement Avarage
+   * @param req
+   * @param res
+   * @param next
+   */
+  public async getDailyAverageMeasurement(req: any, res: any, next: any) {
+    console.log("App Controller - getDailyAverageMeasurement");
+    const handler = new AppHandler();
+
+    // Create serve data:
+    let serveData = this.CreateServeData(
+      handler.getDailyAverageMeasurement,
+      { userPlantId: req.params.userPlantId },
+      handler.buildPageDataResult,
+      handler,
+      "getDailyAverageMeasurement"
+    );
+    // Serve request:
+    super.ServeRequest(req, res, serveData);
+  }
 
   /**
    *  create New User
@@ -136,28 +187,6 @@ export class AppController extends AbsController {
     super.ServeRequest(req, res, serveData);
   }
 
-     /**
-   *  get Planet By Name
-   * @param req
-   * @param res
-   * @param next
-   */
-      public async getAllUserPlanets(req: any, res: any, next: any) {
-        console.log("App Controller - getAllUserPlanets");
-        const handler = new AppHandler();
-    
-        // Create serve data:
-        let serveData = this.CreateServeData(
-          handler.getAllUserPlanets,
-          { userId: req.params.userId },
-          handler.buildPageDataResult,
-          handler,
-          "getPlanetByName"
-        );
-        // Serve request:
-        super.ServeRequest(req, res, serveData);
-      }
-
   /**
    *  add Measurement Value
    * @param req
@@ -179,6 +208,34 @@ export class AppController extends AbsController {
       handler.buildPageDataResult,
       handler,
       "addMeasurementValue"
+    );
+    // Serve request:
+    super.ServeRequest(req, res, serveData);
+  }
+
+  
+  /**
+   *  add Measurement Value
+   * @param req
+   * @param res
+   * @param next
+   */
+   public async addMeasurementValueManually(req: any, res: any, next: any) {
+    console.log("App Controller - addMeasurementValueManually");
+    const handler = new AppHandler();
+
+    // Create serve data:
+    let serveData = this.CreateServeData(
+      handler.addMeasurementValueManually,
+      {
+        sensorId: req.body.sensorId,
+        measurementType: req.body.measurementType,
+        value: req.body.value,
+        dateTime:req.body.dateTime,
+      },
+      handler.buildPageDataResult,
+      handler,
+      "addMeasurementValueManually"
     );
     // Serve request:
     super.ServeRequest(req, res, serveData);

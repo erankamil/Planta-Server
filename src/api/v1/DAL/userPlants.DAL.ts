@@ -73,7 +73,7 @@ export class UserPlantsDAL extends AbsDAL {
       const model = this.getModel();
       const filter = this.getQueryFilters(filters);
 
-      const res = await model.findOne(filter).sort(options);
+      const res = await model.findOne(filter).sort(options).populate('plant');
       return { res };
     } catch (error) {
       throw new ErrorMsgs("Internal server error", error.message, false);

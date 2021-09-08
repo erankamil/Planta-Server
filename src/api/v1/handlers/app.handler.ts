@@ -80,16 +80,16 @@ export class AppHandler extends AbsRequestHandler {
   }
 
   /**
-   * get All Planets
+   * get All UserPlanets
    * @param reqData
    */
 
-   public async getAllUserPlanets(reqData: any) {
+  public async getAllUserPlanets(reqData: any) {
     const userPlantsService = new UserPlantsService();
     const serviceData = {
       user: {},
       pagination: {},
-      filters: {userId : reqData.userId},
+      filters: { userId: reqData.userId },
       sort: {},
     };
 
@@ -108,6 +108,59 @@ export class AppHandler extends AbsRequestHandler {
 
     const pageData = {
       plants: Allplants,
+    };
+
+    return { pageData };
+  }
+
+  /**
+   * get Daily Measurement Avarage
+   * @param reqData
+   */
+
+  public async getDailyAverageMeasurement(reqData: any) {
+    const userPlantsService = new UserPlantsService();
+    const plantsService = new PlantsService();
+
+    const userPlantsServiceData = {
+      user: {},
+      pagination: {},
+      filters: { _id: reqData.userPlantId },
+      sort: {},
+    };
+
+    const userPlantData = await userPlantsService.findOne(
+      userPlantsServiceData
+    );
+    const userPlant = userPlantData?.res?._doc;
+
+    if (!userPlant.plant) {
+      throw "Error: cannot find userplant";
+    }
+    const plant = userPlant.plant;
+    const lastWeekDatesArray = userPlantsService.getLastWeekDates();
+    const dailyAverageMeasurement = lastWeekDatesArray.map((date) => {
+      const hoursOflightData = userPlant.hoursOflightPerDay.find(
+        (val) => val.date === date
+      );
+      const hoursOflight = hoursOflightData._doc.value;
+      let tempSumValue = 0;
+      let counter = 0;
+      for (var i = 0; i < userPlant.soilMoisturePerHour.length; i++) {
+        if (userPlant.soilMoisturePerHour[i]._doc.date === date) {
+          counter++;
+          tempSumValue += userPlant.soilMoisturePerHour[i]._doc.value;
+        }
+      }
+
+      const DailyAverag = tempSumValue / counter;
+      return { date, hoursOflight, DailyAverag };
+    });
+
+    const pageData = {
+      dailyAverageMeasurement: dailyAverageMeasurement,
+      optimalSunHourtsPerDay: plant._doc.sun_hours,
+      optimalSoilMoisture: plant._doc.soil_moisture,
     };
 
     return { pageData };
@@ -195,6 +248,31 @@ export class AppHandler extends AbsRequestHandler {
     const sensorId = reqData.sensorId;
 
     const update = userPlantsService.getUpdateValuesFromReq(reqData);
+
+    const filter = { sensorId: sensorId };
+    const updatedUserPlant = await userPlantsService.findOneAndUpdate(
+      filter,
+      update
+    );
+
+    const pageData = {
+      newUser: updatedUserPlant,
+    };
+
+    return { pageData };
+  }
+
+  /**
+   * add Measurement Value Manually
+   * @param reqData
+   */
+
+  public async addMeasurementValueManually(reqData: any) {
+    const userPlantsService = new UserPlantsService();
+    const sensorId = reqData.sensorId;
+
+    const update =
+      userPlantsService.getUpdateValuesFromReqForManuallyUpdate(reqData);
 
     const filter = { sensorId: sensorId };
     const updatedUserPlant = await userPlantsService.findOneAndUpdate(

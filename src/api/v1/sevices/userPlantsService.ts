@@ -3,7 +3,22 @@ import { UserPlantsDAL } from "../DAL/userPlants.DAL";
 export class UserPlantsService {
   private userPlantsDAL: UserPlantsDAL | any = new UserPlantsDAL();
 
-  getDateAndHourStr(date:Date){
+  public getLastWeekDates(){
+    const oneDayInMiliseconds = 24*60*60*1000;
+    let currentDateTime = new Date().getTime();
+    let tempDate;
+    let dateArray = [];
+
+    for(let i =0; i<7; i++){
+      currentDateTime = currentDateTime - oneDayInMiliseconds;
+      tempDate = this.getDateAndHourStr(new Date(currentDateTime));
+      dateArray[i] = tempDate.dateStr;
+    }
+
+    return dateArray;
+  }
+
+    getDateAndHourStr(date:Date){
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const yaer = date.getFullYear();
@@ -18,6 +33,47 @@ export class UserPlantsService {
     const measurementType = reqData.measurementType;
     const updateValues = reqData.value;
     const dateTime = new Date();
+    const { hourStr, dateStr } = this.getDateAndHourStr(dateTime);
+    
+    let res = null;
+    let value;
+    if (updateValues) {
+    switch (measurementType) {
+      case "soilMoisturePerHour": {
+          value = {
+            date: dateStr,
+            hour: hourStr,
+            value: updateValues,
+          };
+          res = { $push: { soilMoisturePerHour: value } };
+        break;
+      }
+      case "hoursOflightPerDay": {
+          value = { date: dateStr, value: updateValues };
+          res = { $push: { hoursOflightPerDay: value } };
+        break;
+      }
+      default: {
+        throw "ERROR:Update measurementType wrong";
+        break;
+      }
+    }
+  }
+  else{
+    throw "ERROR:The measurement value empty";
+  }
+
+    if (!res) {
+      throw "ERROR:Update updateValues wrong";
+    } else {
+      return res;
+    }
+  }
+
+  getUpdateValuesFromReqForManuallyUpdate(reqData: any): any {
+    const measurementType = reqData.measurementType;
+    const updateValues = reqData.value;
+    const dateTime = new Date(reqData.dateTime);
     const { hourStr, dateStr } = this.getDateAndHourStr(dateTime);
     
     let res = null;
@@ -99,4 +155,5 @@ export class UserPlantsService {
     const userPlant = await this.userPlantsDAL.findOneAndUpdate(filter, update);
     return userPlant;
   }
+  
 }
