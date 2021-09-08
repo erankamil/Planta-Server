@@ -2,9 +2,11 @@ import { UserPlantsDAL } from "../DAL/userPlants.DAL";
 
 export class UserPlantsService {
   private userPlantsDAL: UserPlantsDAL | any = new UserPlantsDAL();
+  public static readonly ISRAEL_TIME_HOUR_OFFSET = 3;
+  
 
   public getLastWeekDates(){
-    const oneDayInMiliseconds = 24*60*60*1000;
+    const oneDayInMiliseconds = (24+UserPlantsService.ISRAEL_TIME_HOUR_OFFSET)*60*60*1000 ;
     let currentDateTime = new Date().getTime();
     let tempDate;
     let dateArray = [];
@@ -19,11 +21,14 @@ export class UserPlantsService {
   }
 
     getDateAndHourStr(date:Date){
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const yaer = date.getFullYear();
-    const hour = date.getHours();
-    const minute = date.getMinutes();
+    let timeUTC = date.getUTCMilliseconds();
+    const israelTimeMiliseconds = UserPlantsService.ISRAEL_TIME_HOUR_OFFSET*60*60*1000;
+    const israelTimeDate = new Date(timeUTC+israelTimeMiliseconds);
+    const day = israelTimeDate.getUTCDate();
+    const month = israelTimeDate.getUTCMonth() + 1;
+    const yaer = israelTimeDate.getUTCFullYear();
+    const hour = israelTimeDate.getUTCHours();
+    const minute = israelTimeDate.getUTCMinutes();
     const dateStr = `${day}/${month}/${yaer}`;
     const hourStr = `${hour}:${minute}`;
     return { hourStr, dateStr };
