@@ -3,15 +3,15 @@ import { UserPlantsDAL } from "../DAL/userPlants.DAL";
 export class UserPlantsService {
   private userPlantsDAL: UserPlantsDAL | any = new UserPlantsDAL();
   public static readonly ISRAEL_TIME_HOUR_OFFSET = 3;
-  
 
-  public getLastWeekDates(){
-    const oneDayInMiliseconds = (24+UserPlantsService.ISRAEL_TIME_HOUR_OFFSET)*60*60*1000 ;
+  public getLastWeekDates() {
+    const oneDayInMiliseconds =
+      (24 + UserPlantsService.ISRAEL_TIME_HOUR_OFFSET) * 60 * 60 * 1000;
     let currentDateTime = new Date().getTime();
     let tempDate;
     let dateArray = [];
 
-    for(let i =0; i<7; i++){
+    for (let i = 0; i < 7; i++) {
       currentDateTime = currentDateTime - oneDayInMiliseconds;
       tempDate = this.getDateAndHourStr(new Date(currentDateTime));
       dateArray[i] = tempDate.dateStr;
@@ -20,10 +20,11 @@ export class UserPlantsService {
     return dateArray;
   }
 
-    getDateAndHourStr(date:Date){
+  getDateAndHourStr(date: Date) {
     let timeUTC = date.getUTCMilliseconds();
-    const israelTimeMiliseconds = UserPlantsService.ISRAEL_TIME_HOUR_OFFSET*60*60*1000;
-    const israelTimeDate = new Date(timeUTC+israelTimeMiliseconds);
+    const israelTimeMiliseconds =
+      UserPlantsService.ISRAEL_TIME_HOUR_OFFSET * 60 * 60 * 1000;
+    const israelTimeDate = new Date(timeUTC + israelTimeMiliseconds);
     const day = israelTimeDate.getUTCDate();
     const month = israelTimeDate.getUTCMonth() + 1;
     const yaer = israelTimeDate.getUTCFullYear();
@@ -39,34 +40,33 @@ export class UserPlantsService {
     const updateValues = reqData.value;
     const dateTime = new Date();
     const { hourStr, dateStr } = this.getDateAndHourStr(dateTime);
-    
+
     let res = null;
     let value;
     if (updateValues) {
-    switch (measurementType) {
-      case "soilMoisturePerHour": {
+      switch (measurementType) {
+        case "soilMoisturePerHour": {
           value = {
             date: dateStr,
             hour: hourStr,
             value: updateValues,
           };
           res = { $push: { soilMoisturePerHour: value } };
-        break;
-      }
-      case "hoursOflightPerDay": {
+          break;
+        }
+        case "hoursOflightPerDay": {
           value = { date: dateStr, value: updateValues };
           res = { $push: { hoursOflightPerDay: value } };
-        break;
+          break;
+        }
+        default: {
+          throw "ERROR:Update measurementType wrong";
+          break;
+        }
       }
-      default: {
-        throw "ERROR:Update measurementType wrong";
-        break;
-      }
+    } else {
+      throw "ERROR:The measurement value empty";
     }
-  }
-  else{
-    throw "ERROR:The measurement value empty";
-  }
 
     if (!res) {
       throw "ERROR:Update updateValues wrong";
@@ -80,34 +80,33 @@ export class UserPlantsService {
     const updateValues = reqData.value;
     const dateTime = new Date(reqData.dateTime);
     const { hourStr, dateStr } = this.getDateAndHourStr(dateTime);
-    
+
     let res = null;
     let value;
     if (updateValues) {
-    switch (measurementType) {
-      case "soilMoisturePerHour": {
+      switch (measurementType) {
+        case "soilMoisturePerHour": {
           value = {
             date: dateStr,
             hour: hourStr,
             value: updateValues,
           };
           res = { $push: { soilMoisturePerHour: value } };
-        break;
-      }
-      case "hoursOflightPerDay": {
+          break;
+        }
+        case "hoursOflightPerDay": {
           value = { date: dateStr, value: updateValues };
           res = { $push: { hoursOflightPerDay: value } };
-        break;
+          break;
+        }
+        default: {
+          throw "ERROR:Update measurementType wrong";
+          break;
+        }
       }
-      default: {
-        throw "ERROR:Update measurementType wrong";
-        break;
-      }
+    } else {
+      throw "ERROR:The measurement value empty";
     }
-  }
-  else{
-    throw "ERROR:The measurement value empty";
-  }
 
     if (!res) {
       throw "ERROR:Update updateValues wrong";
@@ -160,5 +159,4 @@ export class UserPlantsService {
     const userPlant = await this.userPlantsDAL.findOneAndUpdate(filter, update);
     return userPlant;
   }
-  
 }
