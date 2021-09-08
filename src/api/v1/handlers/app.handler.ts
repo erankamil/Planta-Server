@@ -120,7 +120,6 @@ export class AppHandler extends AbsRequestHandler {
 
   public async getDailyAverageMeasurement(reqData: any) {
     const userPlantsService = new UserPlantsService();
-    const plantsService = new PlantsService();
 
     const userPlantsServiceData = {
       user: {},
@@ -160,6 +159,43 @@ export class AppHandler extends AbsRequestHandler {
     const pageData = {
       dailyAverageMeasurement: dailyAverageMeasurement,
       optimalSunHourtsPerDay: plant._doc.sun_hours,
+      optimalSoilMoisture: plant._doc.soil_moisture,
+    };
+
+    return { pageData };
+  }
+
+  /**
+   * get Last Soil Measurement
+   * @param reqData
+   */
+
+   public async getLastSoilMeasurement(reqData: any) {
+    const userPlantsService = new UserPlantsService();
+
+    const userPlantsServiceData = {
+      user: {},
+      pagination: {},
+      filters: { _id: reqData.userPlantId },
+      sort: {},
+    };
+
+    const userPlantData = await userPlantsService.findOne(
+      userPlantsServiceData
+    );
+    const userPlant = userPlantData?.res?._doc;
+
+    if (!userPlant.plant) {
+      throw "Error: cannot find userplant";
+    }
+
+    const plant = userPlant.plant;
+    const lastSoilMeasurement = userPlant.soilMoisturePerHour.sort((a,b)=>
+   new Date( `${b._doc.date} ${b._doc.hour}`).getTime() - new Date( `${a._doc.date} ${a._doc.hour}`).getTime())[0];
+    // var maxB = a.sort((a,b)=>b.y-a.y)[0].y;
+    
+    const pageData = {
+      lastSoilMeasurement: lastSoilMeasurement,
       optimalSoilMoisture: plant._doc.soil_moisture,
     };
 

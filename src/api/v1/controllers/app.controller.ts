@@ -20,6 +20,9 @@ export class AppController extends AbsController {
     // get Daily Measurement Avarage
     this.router.get( "/get-daily-measurement-avarage/:userPlantId", this.getDailyAverageMeasurement.bind(this));
      
+    // get Last Soil Measurement
+    this.router.get( "/get-last-soil-measurement/:userPlantId", this.getLastSoilMeasurement.bind(this));
+
     // create new user
     this.router.post("/sign-up", this.createNewUser.bind(this));
 
@@ -134,6 +137,28 @@ export class AppController extends AbsController {
     // Serve request:
     super.ServeRequest(req, res, serveData);
   }
+
+/**
+   *  get Last Soil Measurement
+   * @param req
+   * @param res
+   * @param next
+   */
+ public async getLastSoilMeasurement(req: any, res: any, next: any) {
+  console.log("App Controller - getLastSoilMeasurement");
+  const handler = new AppHandler();
+
+  // Create serve data:
+  let serveData = this.CreateServeData(
+    handler.getLastSoilMeasurement,
+    { userPlantId: req.params.userPlantId },
+    handler.buildPageDataResult,
+    handler,
+    "getLastSoilMeasurement"
+  );
+  // Serve request:
+  super.ServeRequest(req, res, serveData);
+}
 
   /**
    *  create New User
