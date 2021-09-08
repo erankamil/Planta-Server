@@ -21,15 +21,16 @@ export class UserPlantsService {
   }
 
   getDateAndHourStr(date: Date) {
-    let timeUTC = date.getUTCMilliseconds();
+    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
     const israelTimeMiliseconds =
       UserPlantsService.ISRAEL_TIME_HOUR_OFFSET * 60 * 60 * 1000;
-    const israelTimeDate = new Date(timeUTC + israelTimeMiliseconds);
-    const day = israelTimeDate.getUTCDate();
-    const month = israelTimeDate.getUTCMonth() + 1;
-    const yaer = israelTimeDate.getUTCFullYear();
-    const hour = israelTimeDate.getUTCHours();
-    const minute = israelTimeDate.getUTCMinutes();
+     
+    const israelTimeDate = new Date(date.getTime() + userTimezoneOffset + israelTimeMiliseconds);
+    const day = israelTimeDate.getDate();
+    const month = israelTimeDate.getMonth() + 1;
+    const yaer = israelTimeDate.getFullYear();
+    const hour = israelTimeDate.getHours();
+    const minute = israelTimeDate.getMinutes();
     const dateStr = `${day}/${month}/${yaer}`;
     const hourStr = `${hour}:${minute}`;
     return { hourStr, dateStr };
