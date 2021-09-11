@@ -4,8 +4,11 @@ import { PlantsService } from "../sevices/plantsService";
 import { UsersService } from "../sevices/usersService";
 import { UserPlantsService } from "../sevices/userPlantsService";
 import debug = require("debug");
+import  { Twilio } from 'twilio';
 
 require("dotenv").config();
+
+const client = new Twilio(process.env.TWILIO_ACOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 export class AppHandler extends AbsRequestHandler {
   /**
@@ -138,21 +141,32 @@ export class AppHandler extends AbsRequestHandler {
     }
     const plant = userPlant.plant;
     const lastWeekDatesArray = userPlantsService.getLastWeekDates();
+    let hoursOflight = 0;
     const dailyAverageMeasurement = lastWeekDatesArray.map((date) => {
       const hoursOflightData = userPlant.hoursOflightPerDay.find(
         (val) => val.date === date
-      );
-      const hoursOflight = hoursOflightData._doc.value;
+      ) || {};
+      if(hoursOflightData?._doc?.value){
+        hoursOflight = hoursOflightData._doc.value;
+      }
+      
       let tempSumValue = 0;
       let counter = 0;
-      for (var i = 0; i < userPlant.soilMoisturePerHour.length; i++) {
-        if (userPlant.soilMoisturePerHour[i]._doc.date === date) {
-          counter++;
-          tempSumValue += userPlant.soilMoisturePerHour[i]._doc.value;
+      let DailyAverag = 0;
+
+      if(userPlant.soilMoisturePerHour.length !== 0){
+        for (var i = 0; i < userPlant.soilMoisturePerHour.length; i++) {
+          if (userPlant.soilMoisturePerHour[i]?._doc?.date === date &&
+            userPlant.soilMoisturePerHour[i]?._doc?.value) {
+            counter++;
+            tempSumValue += userPlant.soilMoisturePerHour[i]._doc.value;
+          }
         }
       }
-
-      const DailyAverag = tempSumValue / counter;
+      if(counter){
+        DailyAverag = tempSumValue / counter;
+      }
+      
       return { date, hoursOflight, DailyAverag };
     });
 
@@ -198,7 +212,7 @@ export class AppHandler extends AbsRequestHandler {
 
     const pageData = {
       lastSoilMeasurement: lastSoilMeasurement,
-      optimalSoilMoisture: plant._doc.soil_moisture,
+      optimalSoilMoisture: plant?._doc?.soil_moisture,
     };
 
     return { pageData };
@@ -214,10 +228,12 @@ export class AppHandler extends AbsRequestHandler {
 
     const userName = reqData.userName;
     const userId = reqData.userId;
+    const phoneNumber = reqData.phoneNumber;
 
     const newUserData = {
       userId: userId,
       name: userName,
+      phoneNumber:phoneNumber
     };
 
     // Create User:
@@ -282,6 +298,7 @@ export class AppHandler extends AbsRequestHandler {
 
   public async addMeasurementValue(reqData: any) {
     const userPlantsService = new UserPlantsService();
+    const usersService = new UsersService();
 
     const sensorId = reqData.sensorId;
 
@@ -293,8 +310,48 @@ export class AppHandler extends AbsRequestHandler {
       update
     );
 
+    if(!updatedUserPlant?.res){
+      throw "Error: update fail."
+    }
+    else if(!updatedUserPlant.res._doc?.userId){
+      throw "Error: userId is not correct."
+    }
+
+    const userId = updatedUserPlant.res._doc.userId
+    const usersServiceData = {
+      filters: { userId: userId },
+    };
+    const currentUser = await usersService.findOne(usersServiceData);
+    const phoneNumber = currentUser?.res._doc?.phoneNumber;
+
+    if(reqData.measurementType === 'soilMoisturePerHour' && phoneNumber ){
+      const minimalAllowedSoilMoisture = userPlantsService.getMinimalAllowedSoilMoisture(updatedUserPlant);
+      const currentSoilMoistureValue = reqData.value;
+      const plantName = updatedUserPlant.res?._doc?.name || `one of your plant`
+      
+      if(minimalAllowedSoilMoisture &&  minimalAllowedSoilMoisture > currentSoilMoistureValue){
+        const thirstyMessage = `hey, ${plantName} is starting to get too thirsty,it's time to water it.`
+        console.log(thirstyMessage);
+        {
+          client.messages.create(
+            {
+              body:thirstyMessage,
+              to: '+972'+ phoneNumber.toString(),
+              from: "PLANTA"
+            }
+          )
+          .then(
+            (message) => console.log("message sent: " + message.sid + " " + message.to + " " + message.body )
+          )
+          .catch(
+            (err) => console.log(err)
+          )
+        }
+      }
+    }
+    
     const pageData = {
-      newUser: updatedUserPlant,
+      updatedUserPlant: updatedUserPlant
     };
 
     return { pageData };

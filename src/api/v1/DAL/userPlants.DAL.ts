@@ -83,7 +83,7 @@ export class UserPlantsDAL extends AbsDAL {
   public async findOneAndUpdate(filters, update): Promise<any> {
     try {
       const model = this.getModel();
-      const res = await model.findOneAndUpdate(filters, update, { new: true });
+      const res = await (await model.findOneAndUpdate(filters, update, { new: true }).populate('plant'));
       return { res };
     } catch (error) {
       throw new ErrorMsgs("Internal server error", error.message, false);

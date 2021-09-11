@@ -176,6 +176,7 @@ export class AppController extends AbsController {
       {
         userName: req.body.userName,
         userId: req.body.userId,
+        phoneNumber:req.body.phoneNumber,
       },
       handler.buildPageDataResult,
       handler,

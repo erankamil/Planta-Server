@@ -12,6 +12,7 @@ import { ObjectId } from "mongoose";
 export interface IUser {
   userId: string;
   name: string;
+  phoneNumber:number;
 }
 
 class UserMethods {}
@@ -20,6 +21,7 @@ const UserSchema = createStrongSchema(
   {
     userId: { type: String },
     name: { type: String },
+    phoneNumber: { type: Number },
   } as StrongSchema<IUser>,
   new UserMethods(),
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }

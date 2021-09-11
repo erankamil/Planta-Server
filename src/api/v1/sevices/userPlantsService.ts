@@ -116,6 +116,14 @@ export class UserPlantsService {
     }
   }
 
+  getMinimalAllowedSoilMoisture(userPlant:any){
+    const optimalSoilMoistureStr = userPlant?.res?._doc?.plant?._doc?.soil_moisture;
+    if(optimalSoilMoistureStr){
+      const minimalVal = +optimalSoilMoistureStr.split("-")[0];
+      return minimalVal * 0.8;
+    }
+  }
+
   public async createUserPlant(userData: any): Promise<any> {
     const newUserPlant = await this.userPlantsDAL.create(userData);
     return newUserPlant;
