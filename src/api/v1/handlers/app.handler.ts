@@ -186,6 +186,9 @@ export class AppHandler extends AbsRequestHandler {
 
   public async getLastSoilMeasurement(reqData: any) {
     const userPlantsService = new UserPlantsService();
+    const GREEN = 1;
+    const YELLOW = 2;
+    const RED = 3;
 
     const userPlantsServiceData = {
       user: {},
@@ -210,17 +213,31 @@ export class AppHandler extends AbsRequestHandler {
         new Date(`${a._doc.date} ${a._doc.hour}`).getTime()
     )[0];
 
-    // let status = null;
-    // if(plant?._doc?.soil_moisture){
-    //   const soil_moisture =plant?._doc?.soil_moisture;
-    //   const optimalSoilNumber = soil_moisture.split('-')[0]
-    //   const differenceFromOpt = 
-    // }
+    let optimalSoilNumber = null;
+    let status = null;
+    if(plant?._doc?.soil_moisture && lastSoilMeasurement?._doc?.value){
+      const soil_moisture =plant?._doc?.soil_moisture;      
+      const minOptimalSoilNumber = +soil_moisture.split('-')[0]
+      const maxOptimalSoilNumber = +soil_moisture.split('-')[1]
+      optimalSoilNumber = (minOptimalSoilNumber + maxOptimalSoilNumber)/2
+      const lastSoilMeasuremenVal = lastSoilMeasurement._doc.value;
+      
+      if (lastSoilMeasuremenVal  <=  maxOptimalSoilNumber && lastSoilMeasuremenVal  >=  minOptimalSoilNumber){
+        status = GREEN;         // good  
+      }
+      else if(lastSoilMeasuremenVal  <  maxOptimalSoilNumber * 1.2 && lastSoilMeasuremenVal  >  minOptimalSoilNumber * 0.8){
+        status = YELLOW;        // not so good 
+      }
+      else{
+        status = RED;           // bad
+      }
+    }
 
     const pageData = {
       lastSoilMeasurement: lastSoilMeasurement,
       optimalSoilMoisture: plant?._doc?.soil_moisture,
-      // status:status;
+      optimalSoilNumber: optimalSoilNumber,
+      status:status
     };
 
     return { pageData };
