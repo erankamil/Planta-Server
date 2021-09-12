@@ -166,8 +166,8 @@ export class AppHandler extends AbsRequestHandler {
       if(counter){
         DailyAverag = tempSumValue / counter;
       }
-      
-      return { date, hoursOflight, DailyAverag };
+      const newDate = `${date.split('/')[0]}/${date.split('/')[1]}`;
+      return { newDate, hoursOflight, DailyAverag };
     });
 
     const pageData = {
