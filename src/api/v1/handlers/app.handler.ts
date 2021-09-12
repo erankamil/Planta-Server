@@ -210,9 +210,17 @@ export class AppHandler extends AbsRequestHandler {
         new Date(`${a._doc.date} ${a._doc.hour}`).getTime()
     )[0];
 
+    // let status = null;
+    // if(plant?._doc?.soil_moisture){
+    //   const soil_moisture =plant?._doc?.soil_moisture;
+    //   const optimalSoilNumber = soil_moisture.split('-')[0]
+    //   const differenceFromOpt = 
+    // }
+
     const pageData = {
       lastSoilMeasurement: lastSoilMeasurement,
       optimalSoilMoisture: plant?._doc?.soil_moisture,
+      // status:status;
     };
 
     return { pageData };
@@ -262,8 +270,8 @@ export class AppHandler extends AbsRequestHandler {
 
     const plantsData = {
       pagination: { skip: 0, limit: 1 },
-      filters: {},
-      sort: { name: plantName },
+      filters: {name: plantName},
+      sort: {},
     };
 
     const plantRes = await plantsService.findOne(plantsData);
